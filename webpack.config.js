@@ -1,12 +1,27 @@
-const path = require('path');
+const path               = require('path')
+const HtmlWebpackPlugin  = require('html-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const webpack            = require('webpack')
 
 module.exports = {
-  entry: './src/client/index.js',
+  entry: {
+    app: [ './src/client/index.js', 'webpack-hot-middleware/client' ],
+  },
 
   output: {
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
+
+  devtool: 'inline-source-map',
+
+  plugins: [
+    new CleanWebpackPlugin([ 'dist' ]),
+    new HtmlWebpackPlugin({ title: 'Lamp Server' }),
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
 
   module: {
     rules: [
@@ -31,4 +46,4 @@ module.exports = {
       },
     ],
   },
-};
+}
