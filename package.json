@@ -1,0 +1,33 @@
+{
+  "name": "lamp-server",
+  "version": "0.0.1",
+  "description": "le serveur du lamp.",
+  "main": "./src/server/app.js",
+  "scripts": {
+    "dev": "nodemon ./src/server/app.js",
+    "build": "webpack",
+    "webpack": "webpack",
+    "develop": "nodemon ./server/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.6.0",
+    "express": "^4.16.2",
+    "react": "^16.2.0",
+    "request": "^2.83.0",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^0.1.19",
+    "css-loader": "^0.28.10",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "file-loader": "^1.1.11",
+    "style-loader": "^0.20.3",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.11"
+  }
+}

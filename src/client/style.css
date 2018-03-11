@@ -1,0 +1,14 @@
+@font-face {
+  font-family: 'Indie Flower';
+  src:  url('./IndieFlower.ttf');
+  font-weight: 600;
+  font-style: normal;
+}
+
+.hello {
+  color: white;
+  font-family: 'Indie Flower';
+  font-size: 2rem;
+
+  background: url('./shrug.png');
+}
