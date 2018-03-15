@@ -5,7 +5,7 @@ const common       = require('./webpack.common')
 
 module.exports = webpackMerge(common, {
   entry: {
-    app: [ './src/client/index.js', 'webpack-hot-middleware/client' ],
+    app: [ './src/client/index.jsx', 'webpack-hot-middleware/client' ],
   },
 
   mode: 'development',

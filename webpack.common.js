@@ -1,11 +1,11 @@
-const path               = require('path')
-const HtmlWebpackPlugin  = require('html-webpack-plugin')
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
-const webpack            = require('webpack')
+const webpack = require('webpack')
 
 module.exports = {
   entry: {
-    app: './src/client/index.js',
+    app: './src/client/index.jsx',
   },
 
   output: {
@@ -16,9 +16,14 @@ module.exports = {
 
   devtool: 'inline-source-map',
 
-  plugins: [
-    new CleanWebpackPlugin([ 'dist' ]),
-    new HtmlWebpackPlugin({ title: 'Lamp Server' }),
+  plugins: [ new CleanWebpackPlugin([ 'dist' ]),
+    new HtmlWebpackPlugin({
+      title:    'Lamp Server',
+      filename: 'index.html',
+      template: './src/client/index.html',
+      inject:   'body',
+
+    }),
   ],
 
   module: {
@@ -30,28 +35,42 @@ module.exports = {
           'css-loader',
         ],
       },
+
+      {
+        test: /\.jsx$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [ '@babel/preset-env', '@babel/preset-react' ],
+          },
+        },
+      },
+
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
           'file-loader',
         ],
       },
+
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [
           'file-loader',
         ],
       },
-{
-            test: /\.scss$/,
-            use: [{
-                loader: "style-loader" // creates style nodes from JS strings
-            }, {
-                loader: "css-loader" // translates CSS into CommonJS
-            }, {
-                loader: "sass-loader" // compiles Sass to CSS
-            }]
-        }
+
+      {
+        test: /\.scss$/,
+        use: [{
+          loader: 'style-loader',
+        }, {
+          loader: 'css-loader',
+        }, {
+          loader: 'sass-loader',
+        }],
+      },
     ],
   },
 }
