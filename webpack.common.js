@@ -5,7 +5,7 @@ const webpack            = require('webpack')
 
 module.exports = {
   entry: {
-    app: [ './src/client/index.js', 'webpack-hot-middleware/client' ],
+    app: './src/client/index.js',
   },
 
   output: {
@@ -19,8 +19,6 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin([ 'dist' ]),
     new HtmlWebpackPlugin({ title: 'Lamp Server' }),
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
   ],
 
   module: {
@@ -44,6 +42,16 @@ module.exports = {
           'file-loader',
         ],
       },
+{
+            test: /\.scss$/,
+            use: [{
+                loader: "style-loader" // creates style nodes from JS strings
+            }, {
+                loader: "css-loader" // translates CSS into CommonJS
+            }, {
+                loader: "sass-loader" // compiles Sass to CSS
+            }]
+        }
     ],
   },
 }

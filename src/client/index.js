@@ -13,7 +13,11 @@ function component() {
   const imgshrug = new Image()
   const btn      = document.createElement('button')
 
-  element.innerHTML = _.map([ 'man', 'swek' ], d => `woot ${d}`)
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Looks like we are in production mode!')
+  }
+
+  element.innerHTML = _.map([ 'kaas', 'swek' ], d => `woot ${d}`)
   element.classList.add('hello')
 
   imgshrug.src = Shrug
