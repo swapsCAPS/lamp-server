@@ -4,7 +4,7 @@
   "description": "le serveur du lamp.",
   "main": "./src/server/app.js",
   "scripts": {
-    "develop": "NODE_ENV=development node ./src/server/app.js",
+    "develop": "NODE_ENV=development nodemon ./src/server/app.js",
     "build": "NODE_ENV=production webpack --config webpack.prod.js"
   },
   "author": "",
@@ -13,7 +13,9 @@
     "async": "^2.6.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
     "body-parser": "^1.18.2",
     "clean-webpack-plugin": "^0.1.19",
     "cookie-parser": "^1.4.3",
@@ -21,13 +23,17 @@
     "html-webpack-plugin": "^3.0.6",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "request": "^2.83.0",
+    "react-hot-loader": "^4.0.0",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2",
+    "socket.io": "^2.0.4",
     "uglifyjs-webpack-plugin": "^1.2.3",
     "underscore": "^1.8.3",
     "webpack": "^4.1.1",
     "webpack-dev-middleware": "^3.0.1",
     "webpack-hot-middleware": "^2.21.2",
-    "webpack-merge": "^4.1.2"
+    "webpack-merge": "^4.1.2",
+    "winston": "^2.4.1"
   },
   "devDependencies": {
     "css-loader": "^0.28.10",

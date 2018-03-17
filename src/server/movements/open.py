@@ -26,6 +26,7 @@ def open():
 	GPIO.output(DIR_PIN, 1)
 
 	for i in range(0, steps):
+
 		step(.00100)
 
 def step(pause):

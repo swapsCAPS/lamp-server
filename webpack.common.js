@@ -16,7 +16,7 @@ module.exports = {
   devtool: 'inline-source-map',
 
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin([ 'dist' ]),
     new HtmlWebpackPlugin({
       title: 'Lamp Server',
       filename: 'index.html',
@@ -25,6 +25,17 @@ module.exports = {
 
     }),
   ],
+
+  resolve: {
+    extensions: [ '.js', '.jsx', '.json' ],
+  },
+
+  // node: {
+    // console: true,
+    // fs: 'empty',
+    // net: 'empty',
+    // tls: 'empty',
+  // },
 
   module: {
     rules: [
@@ -44,12 +55,13 @@ module.exports = {
       },
 
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env'],
+            presets: [ 'env', 'react' ],
+            plugins: [ 'react-hot-loader/babel' ],
           },
         },
       },
@@ -63,13 +75,15 @@ module.exports = {
 
       {
         test: /\.scss$/,
-        use: [{
-          loader: 'style-loader',
-        }, {
-          loader: 'css-loader',
-        }, {
-          loader: 'sass-loader',
-        }],
+        use: [
+          {
+            loader: 'style-loader',
+          }, {
+            loader: 'css-loader',
+          }, {
+            loader: 'sass-loader',
+          },
+        ],
       },
     ],
   },
