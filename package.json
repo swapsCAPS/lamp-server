@@ -11,6 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "async": "^2.6.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
     "body-parser": "^1.18.2",
     "clean-webpack-plugin": "^0.1.19",
     "cookie-parser": "^1.4.3",
