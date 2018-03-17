@@ -6,7 +6,7 @@ import './style.css'
 export default class App extends Component {
   render() {
     return (
-      <div className="hello">banaan!</div>
+      <div className="hello">yolooo!</div>
     )
   }
 }
