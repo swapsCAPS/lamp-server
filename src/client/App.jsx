@@ -23,9 +23,10 @@ export default class App extends Component {
 
     this.socket.once('connect', () => {
       console.log('connected')
-      let index = 0
 
-      this.socket.emit('data', { action: 'doSomething', data: index })
+      this.socket.emit('data', { movement: 'home' })
+      this.socket.emit('data', { movement: 'open' })
+      this.socket.emit('data', { movement: 'release' })
     })
 
     this.socket.on('data', this.updateState.bind(this))
@@ -39,16 +40,12 @@ export default class App extends Component {
 
   updateState(data) {
     if (!this.mounted) return
-    console.log('data', data)
     this.setState(data)
   }
 
-  toggleSending()  {
-    this.setState((prevState) => {
-      return {
-        send: !prevState.send
-      }
-    })
+  movement(type)  {
+    console.log('type', type)
+    this.socket.emit('data', { movement: type })
   }
 
   render() {
@@ -56,9 +53,11 @@ export default class App extends Component {
       <div>
         <div className="hello">{ this.state.date }</div>
         <QueueMeter
-          queueLength = { this.state.queueLength }
+          queue={this.state.queue}
         />
-        <button onClick={ this.toggleSending.bind(this) }>{ `send: ${ this.state.send }` }</button>
+        <button onClick={this.movement.bind(this, 'home')}>home</button>
+        <button onClick={this.movement.bind(this, 'open')}>open</button>
+        <button onClick={this.movement.bind(this, 'release')}>release</button>
       </div>
     )
   }

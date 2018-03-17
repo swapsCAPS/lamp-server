@@ -1,49 +1,66 @@
-const _                    = require('underscore')
-const path                 = require('path')
-const express              = require('express')
-const webpack              = require('webpack')
+const _ = require('underscore')
+const path = require('path')
+const express = require('express')
+const webpack = require('webpack')
 const webpackDevMiddleware = require('webpack-dev-middleware')
-const cookieParser         = require('cookie-parser')
-const bodyParser           = require('body-parser')
-const { Server }           = require('http')
-const sio                  = require('socket.io')
-const log                  = require('winston')
-const async                = require('async')
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
+const http = require('http')
+const sio = require('socket.io')
+const log = require('winston')
+const async = require('async')
 
-const webpackConfig        = require('../../webpack.dev.js')
+const webpackConfig = require('../../webpack.dev.js')
 
-const app    = express()
-const server = Server(app)
-const io     = sio(server)
+const movements = require('./movements')
+
+const app = express()
+const server = http.Server(app)
+const io = sio(server)
 
 const compiler = webpack(webpackConfig)
 
 const sockets = {}
 
-const actionMap = {
-  doSomething: (data, cb) => {
-    setTimeout(() => {
-      log.info(`finished task '${data}'`)
-      cb()
-    }, 1000)
-  },
+const announce = (data) => {
+  _.each(sockets, socket => socket.emit('data', data))
 }
 
 const queue = async.queue((task, cb) => {
   log.info(`starting task! ${JSON.stringify(task)}`)
-  actionMap[task.action](task.data, cb)
+
+  announce({
+    queue: {
+      length: queue.length(),
+      workersList: queue.workersList(),
+    },
+  })
+
+  movements[task.movement]((code) => {
+    announce({
+      queue: {
+        length: queue.length(),
+        workersList: queue.workersList(),
+      },
+    })
+
+    if (code !== 0) {
+      log.error(`Movement came back with exit code ${code}`)
+    }
+
+    return cb()
+  })
 }, 1)
 
 queue.drain = () => {
   log.info('The queue has been drained')
-  announce({ queueLength: queue.length() })
 }
 
 app
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'pug')
   .use(webpackDevMiddleware(compiler, {
-    noInfo:     true,
+    // noInfo:     true,
     publicPath: webpackConfig.output.publicPath,
   }))
   .use(bodyParser.json())
@@ -55,30 +72,29 @@ app
     res.render('index')
   })
 
-
 server.listen(3000, () => {
   log.info('http server listening')
 })
 
-const announce = (data) => {
-  _.each(sockets, socket => socket.emit('data', data))
-}
-
-io.on('connection', socket => {
+io.on('connection', (socket) => {
   sockets[socket.id] = socket
   log.info(`socket with ${socket.id} connected : ) now ${_.keys(sockets).length}`)
 
   announce({ queueLength: queue.length() })
 
-  socket.on('data', data => {
+  socket.on('data', (data) => {
+    if (!_.contains(_.keys(movements), data.movement)) {
+      return log.warn('Incorrect command')
+    }
     if (queue.length() >= 10) {
-      log.info(`Sorry, the queue is too large, ${data.data} will not be processed`)
-      return
+      return log.info(`The queue is too large, ${data.data} will not be processed`)
     }
 
-    log.info(`pushing task ${data.data}`)
+    log.info(`pushing task ${data.movement}`)
     queue.push(data)
-    announce({ queueLength: queue.length() })
+    return announce({
+      queue: { length: queue.length(), workersList: queue.workersList() },
+    })
   })
 
   const interval = setInterval(() => {
