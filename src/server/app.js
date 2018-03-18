@@ -1,26 +1,23 @@
-const _ = require('underscore')
-const path = require('path')
-const express = require('express')
-const webpack = require('webpack')
+const _                    = require('underscore')
+const path                 = require('path')
+const express              = require('express')
+const webpack              = require('webpack')
 const webpackDevMiddleware = require('webpack-dev-middleware')
-const cookieParser = require('cookie-parser')
-const bodyParser = require('body-parser')
-const http = require('http')
-const sio = require('socket.io')
-const log = require('winston')
-const async = require('async')
+const cookieParser         = require('cookie-parser')
+const bodyParser           = require('body-parser')
+const http                 = require('http')
+const sio                  = require('socket.io')
+const log                  = require('winston')
+const async                = require('async')
 
 const webpackConfig = require('../../webpack.dev.js')
-
-const movements = require('./movements')
-
-const app = express()
-const server = http.Server(app)
-const io = sio(server)
+const movements     = require('./movements')
 
 const compiler = webpack(webpackConfig)
-
-const sockets = {}
+const app      = express()
+const server   = http.Server(app)
+const io       = sio(server)
+const sockets  = {}
 
 const announce = (data) => {
   _.each(sockets, socket => socket.emit('data', data))
@@ -28,32 +25,27 @@ const announce = (data) => {
 
 const queue = async.queue((task, cb) => {
   log.info(`starting task! ${JSON.stringify(task)}`)
-
-  announce({
-    queue: {
-      length: queue.length(),
-      workersList: queue.workersList(),
-    },
-  })
+  announce({ queue: queue._tasks.toArray() })
 
   movements[task.movement]((code) => {
-    announce({
-      queue: {
-        length: queue.length(),
-        workersList: queue.workersList(),
-      },
-    })
+    announce({ queue: queue._tasks.toArray() })
 
     if (code !== 0) {
       log.error(`Movement came back with exit code ${code}`)
     }
 
-    return cb()
+    cb()
   })
+
 }, 1)
 
 queue.drain = () => {
   log.info('The queue has been drained')
+}
+
+queue.pushAndNotify = (task) => {
+  queue.push(task)
+  return announce({ queue: queue._tasks.toArray() })
 }
 
 app
@@ -80,7 +72,7 @@ io.on('connection', (socket) => {
   sockets[socket.id] = socket
   log.info(`socket with ${socket.id} connected : ) now ${_.keys(sockets).length}`)
 
-  announce({ queueLength: queue.length() })
+  announce({ sockets: _.keys(sockets).length, queue: queue._tasks.toArray() })
 
   socket.on('data', (data) => {
     if (!_.contains(_.keys(movements), data.movement)) {
@@ -91,10 +83,7 @@ io.on('connection', (socket) => {
     }
 
     log.info(`pushing task ${data.movement}`)
-    queue.push(data)
-    return announce({
-      queue: { length: queue.length(), workersList: queue.workersList() },
-    })
+    return queue.pushAndNotify(data)
   })
 
   const interval = setInterval(() => {
@@ -104,6 +93,7 @@ io.on('connection', (socket) => {
   socket.once('disconnect', () => {
     delete sockets[socket.id]
     log.info(`socket with ${socket.id} disconnected : ( ${_.keys(sockets).length} left`)
+    announce({ sockets: _.keys(sockets).length })
     clearInterval(interval)
   })
 })
