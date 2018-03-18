@@ -28,4 +28,4 @@ const Root = () => (
 
 ReactDOM.render(<Root />, document.getElementById('root'))
 
-export default hot(module)(App)
+export default hot(module)(Root)

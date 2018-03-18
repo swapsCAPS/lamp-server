@@ -2,7 +2,7 @@ import _                                  from 'underscore'
 import React, { Component }               from 'react'
 import io                                 from 'socket.io-client'
 import PropTypes                          from 'prop-types';
-import { withStyles }                     from 'material-ui/styles'
+import { withStyles, withTheme }          from 'material-ui/styles'
 import Card, { CardActions, CardContent } from 'material-ui/Card'
 import AppBar                             from 'material-ui/AppBar'
 import Toolbar                            from 'material-ui/Toolbar'
@@ -10,6 +10,7 @@ import Button                             from 'material-ui/Button'
 import Paper                              from 'material-ui/Paper'
 import Typography                         from 'material-ui/Typography'
 import Grid                               from 'material-ui/Grid'
+import Icon                               from 'material-ui/Icon'
 import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List'
 import ArrowUpward                        from 'material-ui-icons/ArrowUpward'
 import ArrowDownward                      from 'material-ui-icons/ArrowDownward'
@@ -19,9 +20,21 @@ import './style.css'
 import QueueMeter from './QueueMeter'
 
 const styles = theme => ({
-  // root: {
-    // flexGrow: 1,
-  // },
+  buttonGroup: {
+    marginTop: theme.spacing.unit,
+  },
+
+  button: {
+    margin: theme.spacing.unit,
+  },
+
+  rightIcon: {
+    marginLeft: theme.spacing.unit / 2,
+  },
+
+  root: {
+    flexGrow: 1,
+  },
 
   content: {
     padding: "16px",
@@ -50,14 +63,25 @@ const QueueListItem = ({ type }) => {
   )
 }
 
+const ButtonIcon = ({ className, type }) => {
+  let component = <PowerSettingsNew />
+  if (type === 'home') component = <ArrowUpward />
+  if (type === 'open') component = <ArrowDownward />
+
+  return (
+    <Icon className={className}>
+      { component }
+    </Icon>
+  )
+}
+
 class App extends Component {
   constructor() {
     super()
     this.state = {
       data: 'yolo',
-      queue: {},
+      queue: [],
       sockets: 0,
-      send: false,
     }
 
     this.throttledUpdate = _.throttle(this.updateState, 1000)
@@ -107,34 +131,36 @@ class App extends Component {
         <div className={classes.content}>
           <Grid container spacing={16} direction={"row"}>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} lg={4}>
               <Card>
                 <CardContent>
                   <Typography className={classes.title} color="textSecondary">
-                    Lamp Control!
-                  </Typography>
-
-                  <Typography variant="headline" component="h2">
                     Choose a movement
                   </Typography>
-                </CardContent>
 
-                <CardActions>
-                  {
-                    _.map([ 'home', 'open', 'release' ], (movement) => (
-                      <Button
-                        key     = { `movement-button-${movement}` }
-                        size    = "small"
-                        onClick = {this.movement.bind(this, movement)}>
-                        { movement }
-                      </Button>
-                    ))
-                  }
-                </CardActions>
+                  <Grid container justify="center" className={classes.buttonGroup}>
+                    {
+                      _.map([ 'home', 'open', 'release' ], (movement) => (
+                        <Grid item>
+                          <Button
+                            className = {classes.button}
+                            key       = { `movement-button-${movement}` }
+                            size      = "large"
+                            color     = "primary"
+                            variant   = "raised"
+                            onClick   = {this.movement.bind(this, movement)}>
+                            { movement }
+                            <ButtonIcon className={classes.rightIcon} type={ movement } />
+                          </Button>
+                        </Grid>
+                      ))
+                    }
+                  </Grid>
+                </CardContent>
               </Card>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} lg={4}>
               <Card>
                 <CardContent>
                   <Typography className={classes.title} color="textSecondary">
@@ -148,7 +174,7 @@ class App extends Component {
               </Card>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} lg={4}>
               <Card className={ classes.queueCard }>
                 <CardContent>
                   <Typography className={classes.title} color="textSecondary">
@@ -184,4 +210,4 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(App)
+export default withTheme()(withStyles(styles)(App));

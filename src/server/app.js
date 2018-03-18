@@ -11,7 +11,12 @@ const log                  = require('winston')
 const async                = require('async')
 
 const webpackConfig = require('../../webpack.dev.js')
-const movements     = require('./movements')
+let   movements     = require('./movements')
+
+if (process.env.NODE_ENV !== 'production') {
+  log.warn('Using fake movements')
+  movements = _.mapObject(movements, () => (cb) => setTimeout(cb, 2500) )
+}
 
 const compiler = webpack(webpackConfig)
 const app      = express()
@@ -25,7 +30,6 @@ const announce = (data) => {
 
 const queue = async.queue((task, cb) => {
   log.info(`starting task! ${JSON.stringify(task)}`)
-  announce({ queue: queue._tasks.toArray() })
 
   movements[task.movement]((code) => {
     announce({ queue: queue._tasks.toArray() })
