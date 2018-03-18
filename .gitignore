@@ -4,3 +4,4 @@ dump/
 .env
 config/local*
 *.log
+dist/

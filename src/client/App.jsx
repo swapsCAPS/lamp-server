@@ -16,9 +16,6 @@ import ArrowUpward                        from 'material-ui-icons/ArrowUpward'
 import ArrowDownward                      from 'material-ui-icons/ArrowDownward'
 import PowerSettingsNew                   from 'material-ui-icons/PowerSettingsNew'
 
-import './style.css'
-import QueueMeter from './QueueMeter'
-
 const styles = theme => ({
   buttonGroup: {
     marginTop: theme.spacing.unit,
