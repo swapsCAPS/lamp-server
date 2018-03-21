@@ -28,11 +28,19 @@ const announce = (data) => {
   _.each(sockets, socket => socket.emit('data', data))
 }
 
+const todo = queue => (
+  queue
+    .workersList()
+    .map((w) => w.data)
+    .concat(queue._tasks.toArray())
+)
+
 const queue = async.queue((task, cb) => {
   log.info(`starting task! ${JSON.stringify(task)}`)
+  announce({ queue: todo(queue) })
 
   movements[task.movement]((code) => {
-    announce({ queue: queue._tasks.toArray() })
+    announce({ queue: todo(queue) })
 
     if (code !== 0) {
       log.error(`Movement came back with exit code ${code}`)
@@ -45,11 +53,12 @@ const queue = async.queue((task, cb) => {
 
 queue.drain = () => {
   log.info('The queue has been drained')
+  announce({ queue: todo(queue) })
 }
 
 queue.pushAndNotify = (task) => {
   queue.push(task)
-  return announce({ queue: queue._tasks.toArray() })
+  return announce({ queue: todo(queue) })
 }
 
 app
@@ -76,7 +85,7 @@ io.on('connection', (socket) => {
   sockets[socket.id] = socket
   log.info(`socket with ${socket.id} connected : ) now ${_.keys(sockets).length}`)
 
-  announce({ sockets: _.keys(sockets).length, queue: queue._tasks.toArray() })
+  announce({ sockets: _.keys(sockets).length, queue: todo(queue) })
 
   socket.on('data', (data) => {
     if (!_.contains(_.keys(movements), data.movement)) {
