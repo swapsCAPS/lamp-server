@@ -17,7 +17,7 @@ Clients can send certain movements which will be put into a queue and executed u
 - All the 3D printed parts can be found on my account at OnShape https://cad.onshape.com/documents/2dbd6c65def8e27577aa27df/w/d915cb5f906f3a0b3781bd38/e/d70ad215839a179be49749cb
 
 ### The result
-<img src="https://github.com/swapsCAPS/lamp-server/blob/master/janky0.jpg"          alt="janky" width="600px"/>
+<img src="https://github.com/swapsCAPS/lamp-server/blob/master/janky0.png"          alt="janky" width="600px"/>
 <img src="https://github.com/swapsCAPS/lamp-server/blob/master/janky1.jpg"          alt="janky" width="600px"/>
 <img src="https://github.com/swapsCAPS/lamp-server/blob/master/janky-part-deux.jpg" alt="janky" width="600px"/>
 <img src="https://github.com/swapsCAPS/lamp-server/blob/master/janky3.jpg"          alt="janky" width="600px"/>
