@@ -5,7 +5,8 @@
   "main": "./src/server/app.js",
   "scripts": {
     "develop": "NODE_ENV=development nodemon ./src/server/app.js",
-    "build": "NODE_ENV=production webpack --config webpack.prod.js"
+    "build": "NODE_ENV=production webpack --config webpack.prod.js",
+    "start": "node ./src/server/app.js"
   },
   "author": "",
   "license": "ISC",
@@ -23,6 +24,7 @@
     "html-webpack-plugin": "^3.0.6",
     "material-ui": "^1.0.0-beta.38",
     "material-ui-icons": "^1.0.0-beta.36",
+    "pug": "^2.0.3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-hot-loader": "^4.0.0",

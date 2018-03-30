@@ -10,7 +10,7 @@ const sio                  = require('socket.io')
 const log                  = require('winston')
 const async                = require('async')
 
-const webpackConfig = require('../../webpack.dev.js')
+const webpackConfig = process.env.NODE_ENV === 'production' ? require('../../webpack.prod') : require('../../webpack.dev')
 let   movements     = require('./movements')
 
 if (process.env.NODE_ENV !== 'production') {
@@ -61,24 +61,23 @@ queue.pushAndNotify = (task) => {
   return announce({ queue: todo(queue) })
 }
 
+if(process.env.NODE_ENV !== "production") {
+  app
+    .use(webpackDevMiddleware( compiler, { publicPath: webpackConfig.output.publicPath, } ))
+    .use(require('webpack-hot-middleware')(compiler))
+}
+
 app
-  .set('views', path.join(__dirname, 'views'))
-  .set('view engine', 'pug')
-  .use(webpackDevMiddleware(compiler, {
-    // noInfo:     true,
-    publicPath: webpackConfig.output.publicPath,
-  }))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .use(cookieParser())
-  .use(express.static(path.join(__dirname, 'public')))
-  .use(require('webpack-hot-middleware')(compiler))
+  .use(express.static(webpackConfig.output.path))
   .get('/', (req, res) => {
-    res.render('index')
+    res.sendFile(webpackConfig.output.path + '/index.html')
   })
 
 server.listen(3000, () => {
-  log.info('http server listening')
+  log.info('http server listening on port 3000')
 })
 
 io.on('connection', (socket) => {

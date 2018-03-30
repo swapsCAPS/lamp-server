@@ -9,6 +9,7 @@ Clients can send certain movements which will be put into a queue and executed u
 - 1 Stepper motor driver
 - 1 Lead screw 130mm 2mm pitch
 - 1 Lead screw nut
+- 1 Endstop
 - 1 Raspberry Pi
 - 1 12V adapter (for the stepper)
 - 1 5V adapter (for the Raspberry Pi)

@@ -1,7 +1,8 @@
-const path = require('path')
-const webpack = require('webpack')
-const webpackMerge = require('webpack-merge')
-const common = require('./webpack.common')
+const path               = require('path')
+const webpack            = require('webpack')
+const webpackMerge       = require('webpack-merge')
+const common             = require('./webpack.common')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = webpackMerge(common, {
   entry: {
@@ -11,6 +12,7 @@ module.exports = webpackMerge(common, {
   mode: 'development',
 
   plugins: [
+    new CleanWebpackPlugin([ 'dist' ]),
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
   ],

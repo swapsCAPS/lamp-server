@@ -50,7 +50,7 @@ const styles = theme => ({
 
 const QueueListItem = ({ type }) => {
   let component = <PowerSettingsNew />
-  if (type === 'home') component = <ArrowUpward />
+  if (type === 'close') component = <ArrowUpward />
   if (type === 'open') component = <ArrowDownward />
 
   return (
@@ -62,7 +62,7 @@ const QueueListItem = ({ type }) => {
 
 const ButtonIcon = ({ className, type }) => {
   let component = <PowerSettingsNew />
-  if (type === 'home') component = <ArrowUpward />
+  if (type === 'close') component = <ArrowUpward />
   if (type === 'open') component = <ArrowDownward />
 
   return (
@@ -137,7 +137,7 @@ class App extends Component {
 
                   <Grid container justify="center" className={classes.buttonGroup}>
                     {
-                      _.map([ 'home', 'open', 'release' ], (movement) => (
+                      _.map([ 'open', 'close', 'release' ], (movement) => (
                         <Grid item>
                           <Button
                             className = {classes.button}
