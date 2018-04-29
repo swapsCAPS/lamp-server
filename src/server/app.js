@@ -18,11 +18,13 @@ if (process.env.NODE_ENV !== 'production') {
   movements = _.mapObject(movements, () => (cb) => setTimeout(cb, 2500) )
 }
 
-const compiler = webpack(webpackConfig)
-const app      = express()
-const server   = http.Server(app)
-const io       = sio(server)
-const sockets  = {}
+let   isHomed     = false
+let   lastTask    = ""
+const compiler    = webpack(webpackConfig)
+const app         = express()
+const server      = http.Server(app)
+const io          = sio(server)
+const sockets     = {}
 
 const announce = (data) => {
   _.each(sockets, socket => socket.emit('data', data))
@@ -39,7 +41,15 @@ const queue = async.queue((task, cb) => {
   log.info(`starting task! ${JSON.stringify(task)}`)
   announce({ queue: todo(queue) })
 
+  if (lastTask === task.movement) {
+    log.warn(`Cannot ${task.movement} lamp twice ; )`)
+    return cb()
+  }
+  if (task.movement !== 'release') lastTask = task.movement
+
   movements[task.movement]((code) => {
+    isHomed  = true
+
     announce({ queue: todo(queue) })
 
     if (code !== 0) {
@@ -92,6 +102,10 @@ io.on('connection', (socket) => {
     }
     if (queue.length() >= 10) {
       return log.info(`The queue is too large, ${data.data} will not be processed`)
+    }
+    if (!isHomed) {
+      log.warn('Lamp has not been homed yet.')
+      return queue.pushAndNotify( { movement: 'open' } )
     }
 
     log.info(`pushing task ${data.movement}`)
