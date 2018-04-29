@@ -19,7 +19,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 let   isHomed     = false
-let   lastTask    = ""
+let   lampState   = ""
 const compiler    = webpack(webpackConfig)
 const app         = express()
 const server      = http.Server(app)
@@ -41,11 +41,11 @@ const queue = async.queue((task, cb) => {
   log.info(`starting task! ${JSON.stringify(task)}`)
   announce({ queue: todo(queue) })
 
-  if (lastTask === task.movement) {
+  if (lampState === task.movement) {
     log.warn(`Cannot ${task.movement} lamp twice ; )`)
     return cb()
   }
-  if (task.movement !== 'release') lastTask = task.movement
+  if (task.movement !== 'release') lampState = task.movement
 
   movements[task.movement]((code) => {
     isHomed  = true
